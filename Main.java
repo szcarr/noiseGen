@@ -4,9 +4,12 @@ public class Main {
 
     public static void main(String[] args) {
 
-        System.out.println(riverGenFormula(40, 4, 35, 1.3f));
+        System.out.println(riverGenFormula(40, 4, 10, 1.0));
+        System.out.println(riverGenFormula(60, 20, 20, 1.0));
 
-        //testRiverGenerationPrint();
+        printSeparatingLines();
+
+        testRiverGenerationPrint();
 
     }
 
@@ -43,13 +46,32 @@ public class Main {
     public static void testRiverGenerationPrint() {
 
         Noise an = new Noise();
-        an.riverGeneration(20, 40);
-        
+        an.riverGeneration(20, 40, 8);
+
     }
 
-    public static double riverGenFormula(int width, int initialSizeOfRiver, int x, float modifier) {
+    public static double riverGenFormula(int sizeOfRiver, int targetSize) {
 
-        return (1 / initialSizeOfRiver * ((width - x) / width) + 0.5) * modifier;
+        /*
+        *   targetSize is the ideal size of the width of the river
+        *   sizeOfRiver is the current size of the width of the river
+        */
+
+        if (sizeOfRiver <= targetSize) {
+
+            
+
+        }
+
+        double riverGrowthFactor = 1.0 / (sizeOfRiver * 1.0);
+
+        return riverGrowthFactor + 0.875;
+
+    }
+
+    public static void printSeparatingLines() {
+
+        System.out.println("\n" + "============================================================" + "\n");
 
     }
 

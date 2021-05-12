@@ -100,7 +100,7 @@ public class Noise {
 
             for (int y = 0; y < targetLength; y++) {
 
-                if (rd.nextFloat() < 0.5) {
+                if (rd.nextDouble() < 0.5) {
 
                     currentValue++;
 
@@ -145,7 +145,7 @@ public class Noise {
 
             for (int y = 0; y < targetLength; y++) {
 
-                if (rd.nextFloat() < 0.5) {
+                if (rd.nextDouble() < 0.5) {
 
                     currentValue++;
 
@@ -175,7 +175,7 @@ public class Noise {
 
     }
 
-    public void riverGeneration(int length, int width) {
+    public void riverGeneration(int length, int width, int targetSize) {
 
         /*
         *   To generate a river with 1 and 0
@@ -194,15 +194,21 @@ public class Noise {
         */
 
         int riverValue = 0;
-        int initialSizeOfRiver = 0;
-
-        float modifier = 1.2f;     
+        int sizeOfRiver = 0;
 
         boolean firstRow = true;
 
         for (int y = 0; y < length; y++) {
 
+            /*
+            *   The y value goes vertically
+            */
+
             for (int x = 0; x < width; x++) {
+
+                /*
+                *   The x value goes horizontally
+                */
 
                 if (firstRow) {
 
@@ -213,20 +219,38 @@ public class Noise {
                     */
 
                     if (riverValue == 1) {
-                        
+
                         /*
                         *   if riverValue == 1 then it should be 1 til rng determines it should not be 1.
                         */
 
-                        if (rd.nextFloat() > riverGenFormula(width, initialSizeOfRiver, x, modifier)) {
+                        if (rd.nextDouble() > riverGenFormula(sizeOfRiver, targetSize)) {
 
-                            System.out.print("--" + riverGenFormula(width, initialSizeOfRiver, x, modifier));
+                            /*
+                            *   This if statement is to change the riverValue to 0
+                            *   Meaning it's the end of the river
+                            *   This is randomly determined
+                            *
+                            *   InitialSizeOfRiver is reset when the river ends
+                            */
+
+                            System.out.print("--" + (riverGenFormula(sizeOfRiver, targetSize)));
+                            //System.out.print("!" + initialSizeOfRiver + " "); remove later
 
                             riverValue = 0;
+                            sizeOfRiver = 0;
+
+                        } else {
+
+                            /*
+                            *   The river keeps expanding
+                            */
+
+                            sizeOfRiver++;
 
                         }
 
-                    } else if (rd.nextFloat() >= 0.9) {
+                    } else if (rd.nextDouble() >= 0.9) { //Change formula for generating 1
 
                         System.out.print("-");
 
@@ -236,7 +260,7 @@ public class Noise {
                         */                        
 
                         riverValue = 1;
-                        initialSizeOfRiver++;
+                        sizeOfRiver++;
 
                     }
 
@@ -258,16 +282,33 @@ public class Noise {
 
             }
 
+            /*
+            *   riverValue is z
+            */
+
             System.out.println(riverValue);
+            riverValue = 0;
             firstRow = false;
 
         }
 
     }
 
-    public double riverGenFormula(int width, int initialSizeOfRiver, int x, float modifier) {
+    public double riverGenFormula(int sizeOfRiver, int targetSize) {
+        
+        /*
+        *   targetSize is the ideal size of the width of the river
+        *   sizeOfRiver is the current size of the width of the river
+        */
+        if (sizeOfRiver <= targetSize) {
 
-        return (1 / initialSizeOfRiver * ((width - x) / width) + 0.5) * modifier;
+            
+
+        }
+
+        double riverGrowthFactor = 1.0 / (sizeOfRiver * 1.0);
+
+        return riverGrowthFactor + 0.875;
 
     }
 
