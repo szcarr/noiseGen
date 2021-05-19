@@ -4,8 +4,8 @@ public class Main {
 
     public static void main(String[] args) {
 
-        System.out.println(riverGenFormula(40, 4, 10, 1.0));
-        System.out.println(riverGenFormula(60, 20, 20, 1.0));
+        //System.out.println(riverGenFormula(40, 4, 10, 1.0));
+        //System.out.println(riverGenFormula(60, 20, 20, 1.0));
 
         printSeparatingLines();
 
@@ -46,7 +46,7 @@ public class Main {
     public static void testRiverGenerationPrint() {
 
         Noise an = new Noise();
-        an.riverGeneration(20, 40, 8);
+        an.riverGeneration(20, 40, 8, 10);
 
     }
 

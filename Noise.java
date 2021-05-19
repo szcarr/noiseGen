@@ -175,7 +175,7 @@ public class Noise {
 
     }
 
-    public void riverGeneration(int length, int width, int targetSize) {
+    public void riverGeneration(int length, int width, int targetSize, int offSetPercentage) {
 
         /*
         *   To generate a river with 1 and 0
@@ -224,7 +224,7 @@ public class Noise {
                         *   if riverValue == 1 then it should be 1 til rng determines it should not be 1.
                         */
 
-                        if (rd.nextDouble() > riverGenFormula(sizeOfRiver, targetSize)) {
+                        if (rd.nextDouble() > riverGenFormula(sizeOfRiver, targetSize, offSetPercentage)) {
 
                             /*
                             *   This if statement is to change the riverValue to 0
@@ -234,7 +234,7 @@ public class Noise {
                             *   InitialSizeOfRiver is reset when the river ends
                             */
 
-                            System.out.print("--" + (riverGenFormula(sizeOfRiver, targetSize)));
+                            System.out.print("--" + (riverGenFormula(sizeOfRiver, targetSize, offSetPercentage)));
                             //System.out.print("!" + initialSizeOfRiver + " "); remove later
 
                             riverValue = 0;
@@ -294,21 +294,38 @@ public class Noise {
 
     }
 
-    public double riverGenFormula(int sizeOfRiver, int targetSize) {
+    public double riverGenFormula(int sizeOfRiver, int targetSize, double offSetPercentage) {
         
         /*
         *   targetSize is the ideal size of the width of the river
         *   sizeOfRiver is the current size of the width of the river
+        *
+        *   offSetPercentage means the max value of riverGenFormula will be 1 - offSetPercentage when the sizeOfRiver is equal to targetSize
+        *   so if the offSetPercentage is 20 then max value of
         */
-        if (sizeOfRiver <= targetSize) {
+        
+        double riverGrowthFactor;
 
-            
+        if (sizeOfRiver < targetSize) {
+
+            /*
+            *   To generate formula for when the river is less than ideal
+            *   The "river" should have a high probability to generate when this if statement is true
+            *
+            *   riverGrowthFactor 
+            */
+
+            riverGrowthFactor = (1 - (offSetPercentage / targetSize) * sizeOfRiver) / 100;
+
+        } else {
+
+            riverGrowthFactor = -1;
 
         }
 
-        double riverGrowthFactor = 1.0 / (sizeOfRiver * 1.0);
+        
 
-        return riverGrowthFactor + 0.875;
+        return riverGrowthFactor;
 
     }
 
