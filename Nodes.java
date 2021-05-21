@@ -34,6 +34,12 @@ public class Nodes {
         
     }
 
+    public long getIndetifier() {
+
+        return this.nodeIndetifier;
+        
+    }
+
     @Override
     public String toString() {
 

@@ -1,11 +1,10 @@
 import java.util.ArrayList;
-import java.lang.Math;
+import java.util.Arrays;
 import java.util.Random;
 
 public class Noise {
 
     private Random rd;
-    private Math math;
 
     public Noise() {               
 
@@ -13,7 +12,7 @@ public class Noise {
 
     }
 
-    public double findAverageRiverValue(int Xcoordinates, int Ycoordinates) {
+    public double findAverageRiverValue(int currentXCoordinates, int currentYCoordinates) {
 
         /*
         * Number can only exist like this
@@ -45,7 +44,7 @@ public class Noise {
 
     }
 
-    public double findAverageOfNearbyNumbers(int Xcoordinates, int Ycoordinates) {
+    public double findAverageOfNearbyNumbers(int currentXCoordinates, int currentYCoordinates) {
 
         /*
         * Number can only exist like this
@@ -62,6 +61,8 @@ public class Noise {
         try {
 
             while (true) {
+
+
 
                 break;
 
@@ -175,28 +176,31 @@ public class Noise {
 
     }
 
-    public void riverGeneration(int length, int width, int targetSize) {
+    public void riverGeneration(int length, int width, int targetSize, int offSetPercentage, int riverDeviationPercentage) {
 
         /*
         *   To generate a river with 1 and 0
         *   1 = River, 0 = Not a river
-        *   Initially it checks if first "tile" should be river, it has a X% chance to be a river 
+        *   Initially it checks if first "tile" should be river, it has a Z% chance to be a river 
         *   Remaining tiles of X coordinate / width
         *   Example generation:
         *
-        *   0 0 0 0 0 1 1 1 1 1 1 1 1 0 0 0 0 0 0 
+        *   0 0 0 0 0 1 1 1 1 1 1 1 1 0 0 0 0 0 0
         *   0 0 0 0 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0
         *   0 0 0 0 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0
         *   0 0 0 0 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0
         *   0 0 0 0 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0
         *   0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 0 0 0 0
         *   0 0 0 0 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0
+        *
+        *   the greater riverDeviationPercentage is the more likely the river is to continue generating after sizeOfRiver > targetSize
         */
 
         int riverValue = 0;
         int sizeOfRiver = 0;
 
         boolean firstRow = true;
+        boolean canGenerate = true;
 
         for (int y = 0; y < length; y++) {
 
@@ -212,6 +216,7 @@ public class Noise {
 
                 if (firstRow) {
 
+                    // DONE for now
                     /*
                     *   firstrow is to check where the river should start
                     *   firstRow has different modifiers than y > 0
@@ -224,17 +229,21 @@ public class Noise {
                         *   if riverValue == 1 then it should be 1 til rng determines it should not be 1.
                         */
 
-                        if (rd.nextDouble() > riverGenFormula(sizeOfRiver, targetSize)) {
+                        //System.out.println(riverGenFormula(sizeOfRiver, targetSize, offSetPercentage, riverDeviationPercentage));
+
+                        if (rd.nextDouble() > riverGenFormula(sizeOfRiver, targetSize, offSetPercentage, riverDeviationPercentage)) {
+
+                            // eg e her
 
                             /*
                             *   This if statement is to change the riverValue to 0
                             *   Meaning it's the end of the river
                             *   This is randomly determined
                             *
-                            *   InitialSizeOfRiver is reset when the river ends
+                            *   initialSizeOfRiver is reset when the river ends
                             */
 
-                            System.out.print("--" + (riverGenFormula(sizeOfRiver, targetSize)));
+                            //System.out.print("--" + (riverGenFormula(sizeOfRiver, targetSize, offSetPercentage, riverDeviationPercentage)));
                             //System.out.print("!" + initialSizeOfRiver + " "); remove later
 
                             riverValue = 0;
@@ -250,17 +259,18 @@ public class Noise {
 
                         }
 
-                    } else if (rd.nextDouble() >= 0.9) { //Change formula for generating 1
+                    } else if (rd.nextDouble() >= 0.9 && canGenerate) { //Change formula for generating 1
 
                         System.out.print("-");
 
                         /*
                         *   To determine the initial riverValue's value
                         *   The 
-                        */                        
+                        */
 
                         riverValue = 1;
                         sizeOfRiver++;
+                        canGenerate = false;
 
                     }
 
@@ -268,9 +278,11 @@ public class Noise {
 
                 if (riverValue == 1 && !firstRow) {
 
-                    if (rd.nextInt() <= 5) {
+                    /*
+                    *   To determine non firstRow riverValue by getting the average value of nearby tiles
+                    */
 
-                    }
+                    
 
                 } else {
 
@@ -283,7 +295,7 @@ public class Noise {
             }
 
             /*
-            *   riverValue is z
+            *   riverValue is z?
             */
 
             System.out.println(riverValue);
@@ -294,21 +306,56 @@ public class Noise {
 
     }
 
-    public double riverGenFormula(int sizeOfRiver, int targetSize) {
-        
+    public double riverGenFormula(int sizeOfRiver, int targetSize, int offSetPercentage, int acceptedRiverDeviationPercentage) {
+
         /*
         *   targetSize is the ideal size of the width of the river
         *   sizeOfRiver is the current size of the width of the river
+        *
+        *   offSetPercentage means the max value of riverGenFormula will be 1 - offSetPercentage when the sizeOfRiver is equal or lower than targetSize
+        *   the larger offSetPercentage is the harder it will be for a river to generate while sizeOfRiver <= targetSize
+        *   so if the offSetPercentage is 20 then max value of riverGenFormula is 0.8 while sizeOfRiver <= targetSize is true
         */
+
+        double riverGrowthFactor;
+
+        /*
+        *   Converting whole numbers to decimals
+        */
+
+        double riverDeviation = acceptedRiverDeviationPercentage / 100;
+        double offSetDecimalPercentage = offSetPercentage / 100;
+
         if (sizeOfRiver <= targetSize) {
 
-            
+            /*
+            *   To generate formula for when the river is less than the ideal size
+            *   The "river" should have a high probability to generate when this if statement is true
+            *   
+            *   riverGrowthFactor
+            */
+
+            riverGrowthFactor = 1 - offSetDecimalPercentage / targetSize * sizeOfRiver / 100;
+
+        } else if ((targetSize / sizeOfRiver) > 1 - riverDeviation) {
+
+            /*
+            *   For when the sizeOfRiver is larger than the ideal size
+            */
+
+            riverGrowthFactor = (targetSize * 1.0) / (sizeOfRiver * 1.0) * ((1 * 1.0) + (riverDeviation * 1.0));
+
+        } else {
+
+            /*
+            *   The further the sizeOfRiver is from targetSize the less chance it has to generate a new tile with the value 1
+            */
+
+            riverGrowthFactor = (targetSize * 1.0) / (sizeOfRiver * 1.0);
 
         }
 
-        double riverGrowthFactor = 1.0 / (sizeOfRiver * 1.0);
-
-        return riverGrowthFactor + 0.875;
+        return riverGrowthFactor;
 
     }
 
