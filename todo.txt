@@ -1,0 +1,3 @@
+Regulate width of river when it becomes to wide
+Make a "S" type river
+Make a stable type river

@@ -1,4 +1,7 @@
+package generation; //error les her
+
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Main {
 
@@ -9,10 +12,8 @@ public class Main {
 
         //printSeparatingLines();
 
-        testRiverGenerationPrint(20, 40, 10, 10, 40);
-
-        //default
-
+        printXYHashMap(testRiverGenerationPrint(20, 40, 10, 10, 40), 40);
+        //default        
 
     }
 
@@ -26,40 +27,24 @@ public class Main {
 
     }
 
-    public static void testprimitiveGenerate() {
-
-        Noise an = new Noise();
-
-        ArrayList<Double> test = new ArrayList<>();
-
-        for (int i = 0; i < an.primitiveGenerate().size(); i++) {
-
-            //Double holderVariable = an.primitiveGenerate().get(i);
-
-            //test.add(holderVariable);
-
+    public static void printXYHashMap(HashMap<String, Integer> hashmap, int width) {
+        for (int y = 0; y < width; y++) {
+            for (int x = 0; x < width; x++) {
+                String string = x + " " + y;    //Makes the key
+                
+                
+                System.out.print(hashmap.get(string) + " "); //Gets the value from the key
+            }
+            System.out.println("");
         }
-
-        for (int i = 0; i < test.size(); i++) {
-
-            System.out.println(test.get(i));
-            
-        }
-
     }
 
-    public static void testPrimitiveGeneratePrint() {
+    public static HashMap<String, Integer> testRiverGenerationPrint(int length, int width, int targetSize, int offSetPercentage, int riverDeviationPercentage) {
 
-        Noise an = new Noise();
+        RiverGenerator an = new RiverGenerator();
+        HashMap hashmap = an.riverGeneration(50, 40, 10, 10, 20);
 
-        an.primitiveGeneratePrint();
-
-    }
-
-    public static void testRiverGenerationPrint(int length, int width, int targetSize, int offSetPercentage, int riverDeviationPercentage) {
-
-        Noise an = new Noise();
-        an.riverGeneration(50, 40, 10, 10, 20);
+        return hashmap;
 
     }
 

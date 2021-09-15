@@ -1,3 +1,5 @@
+package generation;
+
 public class Nodes {
     
     private long Xcoords;
